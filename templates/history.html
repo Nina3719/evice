@@ -1,0 +1,35 @@
+<!--Template for Calculating-->
+
+{% extends "layout.html" %} {% block title %} History {% endblock %} {% block main %}
+
+<h2> Trip History </h2>
+<div class="container-fluid">
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col"> Date </th>
+                <th scope="col"> ICE Result</th>
+                <th scope="col">EV Result </th>
+                <th scope="col"> Miles </th>
+                <th scope="col"> Mileage </th>
+                <th scope="col"> Car Infomration </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in result %}
+            <tr>
+                <th scope="col"> {{ category.date_posted }} </th>
+                <td scope="col"> {{ category.result }} </td>
+                <td scope="col"> TO DO </td>
+                <td scope="col"> {{ category.miles }} </td>
+                <td scope="col"> {{ category.mileage }} </td>
+                <td scope="col"> {{ category.make }} | {{ category.model }} | {{ category.year }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</h2>
+
+{% endblock %}

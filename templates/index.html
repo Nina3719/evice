@@ -1,0 +1,103 @@
+<!--Template for Calculating-->
+
+{% extends "layout.html" %} {% block title %} Home {% endblock %} {% block main %}
+
+<h2> Calculate How Much You Could've Saved! </h2>
+<div class="container-fluid">
+    <form action="/" method="post" class="needs-validation" novalidate>
+
+        <div class="form-group">
+            <select name="make" class="form-control" id="validationCustom04" required>
+                <option disabled="" value="" selected="">Make</option>
+                {% for name in make %}
+                <option value="{{ name }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+            <select name="model" class="form-control" id="validationCustom04" required>
+                <option disabled="" value="" selected="">Model</option>
+                {% for name in model %}
+                <option value="{{ name }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+            <select name="year" class="form-control" id="validationCustom04" required>
+                <option disabled="" value="" selected="">Year</option>
+                {% for name in year %}
+                <option value="{{ name }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <!-- <p>
+                <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Input Miles</a>
+                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#multiCollapseExample2" aria-expanded="false"
+                    aria-controls="multiCollapseExample2">Input Start-End Location</button>
+                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#multiCollapseExample3" aria-expanded="false"
+                    aria-controls="multiCollapseExample3">Auto GPS</button>
+            </p>
+
+            <div class="collapse multi-collapse" id="multiCollapseExample1">
+                <input class="form-control" name="miles" id="validationCustom04" placeholder="Miles Travelled" type="text" required>
+            </div>
+            <div class="collapse multi-collapse" id="multiCollapseExample2">
+                <input class="form-control" name="start" id="validationCustom04" placeholder="Start Location" type="text" required>
+                <input class="form-control" name="end" id="validationCustom04" placeholder="End Location" type="text" required>
+            </div>
+            <div class="collapse multi-collapse" id="multiCollapseExample3">
+                To Be Implemented
+            </div> -->
+            <div id="accordion">
+                <a class="btn btn-primary" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"
+                    id="headingOne" style="color:white;">Input Miles</a>
+                <a class="btn btn-primary" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo"
+                    id="headingTwo" style="color:white;">Input Locations</a>
+                <a class="btn btn-primary" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree"
+                    id="headingThree" style="color:white;">Auto GPS</a>
+                <div class="form-group" style="margin-top:1rem;">
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                        <input class="form-control" name="miles" id="validationCustom04" placeholder="Miles Travelled" type="text" required>
+                    </div>
+                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                        <input class="form-control" name="start" id="validationCustom04" placeholder="Start Location" type="text" required>
+                        <input class="form-control" name="end" id="validationCustom04" placeholder="End Location" type="text" required>
+                    </div>
+                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                        To Be Implemented
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <input class="form-control" name="price" id="validationCustom04" placeholder="Price Per Gal" type="text" required>
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-primary" type="submit">Calculate</button>
+        </div>
+
+    </form>
+</div>
+
+
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function () {
+        'use strict';
+        window.addEventListener('load', function () {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+</script>
+
+{% endblock %}
