@@ -7,19 +7,19 @@
     <form action="/" method="post" class="needs-validation" novalidate>
 
         <div class="form-group">
-            <select name="make" class="form-control" id="validationCustom04" required>
+            <select name="make" class="form-control" id="make" required>
                 <option disabled="" value="" selected="">Make</option>
-                {% for name in make %}
+                <!-- {% for name in make %}
                 <option value="{{ name }}">{{ name }}</option>
-                {% endfor %}
+                {% endfor %} -->
             </select>
-            <select name="model" class="form-control" id="validationCustom04" required>
+            <select name="model" class="form-control" id="model" required>
                 <option disabled="" value="" selected="">Model</option>
-                {% for name in model %}
+                <!-- {% for name in model %}
                 <option value="{{ name }}">{{ name }}</option>
-                {% endfor %}
+                {% endfor %} -->
             </select>
-            <select name="year" class="form-control" id="validationCustom04" required>
+            <select name="year" class="form-control" id="year" required>
                 <option disabled="" value="" selected="">Year</option>
                 {% for name in year %}
                 <option value="{{ name }}">{{ name }}</option>
@@ -98,6 +98,51 @@
             });
         }, false);
     })();
+</script>
+
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+
+<script>
+    "use strict";
+
+    var makes = {{ make|tojson }};
+    var models = {{ model|tojson }};
+    var years = {{ year|tojson }};
+
+    console.log(years)
+
+    var make = $('select#make');
+    var model = $('select#model');
+    var year = $('select#year');
+
+    for (var key in makes) {
+        make.append($('<option/>', {'value': makes[key], 'text': makes[key]}));
+    }
+
+    make.change(function(ev) {
+        model.empty();
+        model.append($('<option/>', {'selected':"", 'disabled':"", 'value':"", 'text':"Model"}));
+
+        var selectedMake = $('select#make option:selected()')[0].innerHTML;
+        for (var key in models[selectedMake]) {
+            model.append($('<option/>', {'value': models[selectedMake][key], 'text': models[selectedMake][key]}));
+        }
+    });
+
+    model.change(function(ev) {
+        year.empty();
+        year.append($('<option/>', {'selected':"", 'disabled':"", 'value':"", 'text':"Year"}));
+
+        var selectedModel = $('select#model option:selected()')[0].innerHTML;
+        var selectedMake = $('select#make option:selected()')[0].innerHTML;
+
+        for (var key in years[selectedMake][selectedModel]) {
+            year.append($('<option/>', {'value': years[selectedMake][selectedModel][key], 'text': years[selectedMake][selectedModel][key]}));
+        }
+    });
 </script>
 
 {% endblock %}
