@@ -9,6 +9,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import googlemaps
+from wtforms import SelectField
+from flask_wtf import FlaskForm
 
 from helpers import apology, login_required, lookup, usd
 
@@ -18,6 +20,7 @@ app = Flask(__name__)
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///site.db'
+app.config['SECRET_KEY'] = 'any secret string'
 
 gmaps = googlemaps.Client(key='AIzaSyAtCmvDQ7BP5BjtjFlkCffXQnQJIo2bTEY')
 
@@ -86,9 +89,18 @@ class Car(db.Model):
         return str(self.make) + ", " + str(self.model) + ", " + str(self.year)
 
 
+# class Form(FlaskForm):
+#     make = SelectField('make', choices=list(
+#         set([(car.make, car.make) for car in Car.query.all()])))
+#     model = SelectField('model', choices=[])
+#     year = SelectField('year', choices=[])
+
+
 @app.route("/", methods=["GET", "POST"])
 @login_required
 def index():
+
+    # form = Form()
 
     if request.method == "POST":
 
@@ -96,8 +108,8 @@ def index():
 
         # get data from html
         make = request.form.get("make")
-        year = request.form.get("year")
         model = request.form.get("model")
+        year = request.form.get("year")
 
         mileage = Car.query.filter_by(make=request.form.get("make"), year=request.form.get(
             "year"), model=request.form.get("model")).first()
@@ -137,6 +149,22 @@ def index():
         year.sort()
 
         return render_template("index.html", make=make, model=model, year=year)
+
+
+# @app.route('/<make>')
+# def make(make):
+#     models = list(
+#         set([(car.model, car.model) for car in Car.query.filter_by(make=make).all()]))
+
+#     return jsonify({'model': models})
+
+
+# @app.route('/<make>/<model>')
+# def year(make, model):
+#     years = list(
+#         set([(car.year, car.year) for car in Car.query.filter_by(make=make, model=model).all()]))
+
+#     return jsonify({'year': years})
 
 
 @app.route("/history")
