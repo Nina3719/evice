@@ -4,22 +4,26 @@
 
 <h2> Calculate How Much You Could've Saved! </h2>
 <div class="container-fluid">
+
     <form action="/" method="post" class="needs-validation" novalidate>
 
         <div class="form-group">
             <select name="make" class="form-control" id="validationCustom04" required>
-                <option disabled="" value="" selected="">Make</option>
+                <option style="text-align: center;" disabled="" value="" selected="">Make</option>
                 {% for name in make %}
-                <option value="{{ name }}">{{ name }}</option>
+                <option style="text-align: center;" value="{{ name }}">{{ name }}</option>
                 {% endfor %}
             </select>
-
+        </div>
+        <div class="form-group">
             <select name="model" class="form-control" id="validationCustom04" required>
                 <option disabled="" value="" selected="">Model</option>
                 {% for name in model %}
                 <option value="{{ name }}">{{ name }}</option>
                 {% endfor %}
             </select>
+        </div>
+        <div class="form-group">
             <select name="year" class="form-control" id="validationCustom04" required>
                 <option disabled="" value="" selected="">Year</option>
                 {% for name in year %}
@@ -27,6 +31,7 @@
                 {% endfor %}
             </select>
         </div>
+
         <div class="form-group">
 
             <div id="accordion">
@@ -38,11 +43,21 @@
                     id="headingThree" style="color:white;">Auto GPS</a>
                 <div class="form-group" style="margin-top:1rem;">
                     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                        <input class="form-control" name="miles" id="validationCustom04" placeholder="Miles Travelled" type="text" required>
+                        <input class="form-control" name="miles" id="validationCustom04" placeholder="Miles Travelled" type="text" value="" required>
                     </div>
                     <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                        <input class="form-control" name="start" id="validationCustom04" placeholder="Start Location" type="text" required>
-                        <input class="form-control" name="end" id="validationCustom04" placeholder="End Location" type="text" required>
+                        <input class="form-control" name="start" id="startq" placeholder="Start Location" type="text" required>
+                        <div id="result"></div>
+                        <input class="form-control" name="end" id="endq" placeholder="End Location" type="text" required>
+
+                        <!-- <div class="form-group">
+                            <select name="start" class="form-control" id="validationCustom04" required>
+                                <option disabled="" value="" selected="">Start Location</option>
+                                {% for p in start %}
+                                <option value="{{ p[0] }}">{{ p[1:] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div> -->
                     </div>
                     <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
                         To Be Implemented
@@ -64,46 +79,50 @@
 
 
 <script>
-    // var make_select = document.getElementById("make");
-    // var model_select = document.getElementById("model");
-    // var year_select = document.getElementById("year");
-
-    // make_select.onchange = function () {
-
-    //     make = make_select.value;
-    //     console.log(make)
-
-    //     fetch('/' + make).then(function (response) {
-    //         response.json().then(function (data) {
-    //             var optionHTML = '';
-    //             for (var model of data.model) {
-    //                 optionHTML += '<option value="' + model[0] + '">' + model[1] + '</option>';
-    //             }
-    //             model_select.innerHTML = optionHTML;
-    //         })
-
-    //     });
+    // if (document.getElementsByName("start")[0].value != "" && document.getElementsByName("end")[0].value != "") {
+    //     document.getElementsByName("miles")[0].value = document.getElementsByName("miles")[0].value ? document.getElementsByName(
+    //         "miles")[0].value : 1
+    // } else if (document.getElementsByName("miles")[0].value != "") {
+    //     document.getElementsByName("start")[0].value = document.getElementsByName("start")[0].value ? document.getElementsByName(
+    //         "start")[0].value : 1
+    //     document.getElementsByName("end")[0].value = document.getElementsByName("end")[0].value ? document.getElementsByName(
+    //         "start")[0].value : 1
     // }
 
+    $(document).ready(function () {
+        $('#startq').change(function () {
+            var val1 = $("#startq").val();
+            $.ajax({
+                url: "/search",
+                type: "get",
+                data: {
+                    val1: val1
+                },
+                success: function (response) {
+                    result_div = ''
+                    for (i = 0; i < response.result.length; i++) {
+                        console.log(i)
+                        result_div += "<p class='resulted' type='button' id=" +
+                            response.result[i][0] + " onclick=" + 'myfunc(' + response.result[
+                                i][0] + ')' + ">" + response.result[i][1] +
+                            "</p>"
+                    }
 
-    // model_select.onclick = function () {
-    //     // console.log('hello')
 
-    //     // model = model_select.value;
-    //     // // console.log(make)
-    //     // console.log(model)
+                    $("#result").html(result_div)
+                },
+            });
+            // $(".resulted").on("click", function (event) {
+            //     $("#startq").val($(this.id).text());
+            // });
 
-    //     // fetch('/' + model).then(function (response) {
-    //     //     response.json().then(function (data) {
-    //     //         var optionHTML = '';
-    //     //         for (var year of data.year) {
-    //     //             optionHTML += '<option value="' + year[0] + '">' + year[1] + '</option>';
-    //     //         }
-    //     //         year_select.innerHTML = optionHTML;
-    //     //     })
+        });
+    });
 
-    //     // });
-    // }
+    function myfunc(id) {
+        console.log(id)
+    }
+
 
     // Example starter JavaScript for disabling form submissions if there are invalid fields
     (function () {

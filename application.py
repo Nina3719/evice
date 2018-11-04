@@ -11,6 +11,13 @@ from datetime import datetime
 import googlemaps
 from wtforms import SelectField
 from flask_wtf import FlaskForm
+from sqlalchemy import Column, Integer, Float, Date
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+import csv
+from sqlalchemy import or_
+import flask
 
 from helpers import apology, login_required, lookup, usd
 
@@ -89,11 +96,25 @@ class Car(db.Model):
         return str(self.make) + ", " + str(self.model) + ", " + str(self.year)
 
 
-# class Form(FlaskForm):
-#     make = SelectField('make', choices=list(
-#         set([(car.make, car.make) for car in Car.query.all()])))
-#     model = SelectField('model', choices=[])
-#     year = SelectField('year', choices=[])
+class Place(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    city = db.Column(db.String(100))
+    state_id = db.Column(db.String(100))
+    state_name = db.Column(db.String(100))
+    county_fips = db.Column(db.String(100))
+    county_name = db.Column(db.String(100))
+    lat = db.Column(db.String(100))
+    lng = db.Column(db.String(100))
+    zips = db.Column(db.String(100))
+
+
+# https://simplemaps.com/static/data/us-cities/uscitiesv1.4.csv
+
+class Form(FlaskForm):
+    query = SelectField('make', choices=list(
+        set([(car.make, car.make) for car in Car.query.all()])))
+    model = SelectField('model', choices=[])
+    year = SelectField('year', choices=[])
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -112,12 +133,12 @@ def index():
         year = request.form.get("year")
 
         mileage = Car.query.filter_by(make=request.form.get("make"), year=request.form.get(
-            "year"), model=request.form.get("model")).first()
+            "year"), model=request.form.get("model"))
 
         if not mileage:
             return apology("Car with make year and model not found", 400)
 
-        mileage = mileage.first()
+        mileage = mileage.first().mileage
 
         # use google maps api to get miles
         miles = request.form.get("miles")
@@ -138,9 +159,9 @@ def index():
         print('success')
 
         return render_template("/result.html", model=model,
-                               year=year, make=make, mileage=mileage, miles=miles, price=price, result=result)
+                               year=year, make=make, mileage=mileage, miles=miles, price=price, result=result, key="AIzaSyAZHjXnG0DmFQmUgZN-Yld2RG_aVw3X7d8")
     else:
-        # make, model, year
+        nina = "12345"
         make = list(set([car.make for car in Car.query.all()]))
         make.sort()
         model = list(set([car.model for car in Car.query.all()]))
@@ -148,15 +169,22 @@ def index():
         year = list(set([car.year for car in Car.query.all()]))
         year.sort()
 
-        return render_template("index.html", make=make, model=model, year=year)
+        return render_template("index.html", make=make, model=model, year=year, nina=nina, key="AIzaSyAZHjXnG0DmFQmUgZN-Yld2RG_aVw3X7d8")
 
 
-# @app.route('/<make>')
-# def make(make):
-#     models = list(
-#         set([(car.model, car.model) for car in Car.query.filter_by(make=make).all()]))
+@app.route('/search')
+def resultq():
+    """Search for places that match start query"""
 
-#     return jsonify({'model': models})
+    startq = flask.request.args.get('val1')
+
+    # Postal code, state, state code, city
+    result = list(map(lambda x: (x.id, str(x.city) + ',' + str(x.state_name) + "," + str(x.county_name) + "," + str(x.zips)),
+                      Place.query.filter(or_(Place.city.like('%' + startq + '%'), Place.state_id.like('%' + startq + '%'), Place.state_name.like('%' + startq + '%'), Place.county_fips.like(
+                          '%' + startq + '%'), Place.county_name.like('%' + startq + '%'), Place.lat.like('%' + startq + '%'), Place.lng.like('%' + startq + '%'), Place.zips.like('%' + startq + '%'))).all()))[:10]
+
+    print(result)
+    return jsonify({"result": result})
 
 
 # @app.route('/<make>/<model>')
@@ -282,3 +310,39 @@ def register():
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("register.html")
+
+
+if __name__ == "__main__":
+    with open('place.csv') as csv_file:
+        csv_reader = csv.reader(csv_file)
+        line_count = 0
+        columns = {}
+        for row in csv_reader:  # iterate each row
+            if line_count == 0:  # handles the header
+                col = 0
+                for column in row:
+                    columns[column] = col
+                    col += 1
+            else:
+                if (line_count % 100 == 0):
+                    print(line_count)  # utility, tells the progress
+
+                # object to be added
+                # city, state_id, state_name, county_fips, county_name, "lat","lng","zips","id"
+                place = Place(
+                    id=row[columns['id']],
+                    city=row[columns['city']],
+                    state_id=row[columns['state_id']],
+                    state_name=row[columns['state_name']],
+                    county_fips=row[columns['county_fips']],
+                    county_name=row[columns['county_name']],
+                    lat=row[columns['lat']],
+                    lng=row[columns['lng']],
+                    zips=row[columns['zips']]
+                )
+                # commands to add the object
+                db.session.add(place)
+                db.session.commit()
+            line_count += 1
+
+        print(f'Processed {line_count} lines.')
