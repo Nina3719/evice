@@ -18,6 +18,7 @@ from sqlalchemy.orm import sessionmaker
 import csv
 from sqlalchemy import or_
 import flask
+import geopy.distance
 
 from helpers import apology, login_required, lookup, usd
 
@@ -141,7 +142,17 @@ def index():
         mileage = mileage.first().mileage
 
         # use google maps api to get miles
-        miles = request.form.get("miles")
+        start = request.form.get("startqi")
+        end = request.form.get("endqi")
+
+        startlatlng = Place.query.filter_by(id=start).first(
+        ).lat, Place.query.filter_by(id=start).first().lng
+
+        endlatlng = Place.query.filter_by(id=end).first(
+        ).lat, Place.query.filter_by(id=end).first().lng
+
+        miles = geopy.distance.vincenty(
+            startlatlng, endlatlng).m if startlatlng and endlatlng else request.form.get("miles")
 
         # used google map api to get range of gas price in the area
         price = request.form.get("price")
@@ -183,7 +194,6 @@ def resultq():
                       Place.query.filter(or_(Place.city.like('%' + startq + '%'), Place.state_id.like('%' + startq + '%'), Place.state_name.like('%' + startq + '%'), Place.county_fips.like(
                           '%' + startq + '%'), Place.county_name.like('%' + startq + '%'), Place.lat.like('%' + startq + '%'), Place.lng.like('%' + startq + '%'), Place.zips.like('%' + startq + '%'))).all()))[:10]
 
-    print(result)
     return jsonify({"result": result})
 
 
@@ -313,36 +323,4 @@ def register():
 
 
 if __name__ == "__main__":
-    with open('place.csv') as csv_file:
-        csv_reader = csv.reader(csv_file)
-        line_count = 0
-        columns = {}
-        for row in csv_reader:  # iterate each row
-            if line_count == 0:  # handles the header
-                col = 0
-                for column in row:
-                    columns[column] = col
-                    col += 1
-            else:
-                if (line_count % 100 == 0):
-                    print(line_count)  # utility, tells the progress
-
-                # object to be added
-                # city, state_id, state_name, county_fips, county_name, "lat","lng","zips","id"
-                place = Place(
-                    id=row[columns['id']],
-                    city=row[columns['city']],
-                    state_id=row[columns['state_id']],
-                    state_name=row[columns['state_name']],
-                    county_fips=row[columns['county_fips']],
-                    county_name=row[columns['county_name']],
-                    lat=row[columns['lat']],
-                    lng=row[columns['lng']],
-                    zips=row[columns['zips']]
-                )
-                # commands to add the object
-                db.session.add(place)
-                db.session.commit()
-            line_count += 1
-
-        print(f'Processed {line_count} lines.')
+    pass

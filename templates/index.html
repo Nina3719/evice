@@ -46,18 +46,13 @@
                         <input class="form-control" name="miles" id="validationCustom04" placeholder="Miles Travelled" type="text" value="" required>
                     </div>
                     <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                        <input class="form-control" name="start" id="startq" placeholder="Start Location" type="text" required>
+                        <input class="form-control" name="startqi" id="startqi" type="text" value="" style="display:none;">
+                        <input class="form-control" name="start" id="startq" placeholder="Start Location" type="text" value="" required>
                         <div id="result"></div>
-                        <input class="form-control" name="end" id="endq" placeholder="End Location" type="text" required>
+                        <input class="form-control" name="endqi" id="endqi" type="text" value="" style="display:none;">
+                        <input class="form-control" name="end" id="endq" placeholder="End Location" type="text" value="" required>
+                        <div id="result2"></div>
 
-                        <!-- <div class="form-group">
-                            <select name="start" class="form-control" id="validationCustom04" required>
-                                <option disabled="" value="" selected="">Start Location</option>
-                                {% for p in start %}
-                                <option value="{{ p[0] }}">{{ p[1:] }}</option>
-                                {% endfor %}
-                            </select>
-                        </div> -->
                     </div>
                     <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
                         To Be Implemented
@@ -92,6 +87,7 @@
     $(document).ready(function () {
         $('#startq').change(function () {
             var val1 = $("#startq").val();
+            document.getElementById('result').style.display = "block";
             $.ajax({
                 url: "/search",
                 type: "get",
@@ -102,9 +98,13 @@
                     result_div = ''
                     for (i = 0; i < response.result.length; i++) {
                         console.log(i)
-                        result_div += "<p class='resulted' type='button' id=" +
-                            response.result[i][0] + " onclick=" + 'myfunc(' + response.result[
-                                i][0] + ')' + ">" + response.result[i][1] +
+                        // result_div += "<p class='resulted' type='button' id=" +
+                        //     response.result[i][0] + " onclick=" + 'myfunc(' + response.result[
+                        //         i][0] + ')' + ">" + response.result[i][1] +
+                        //     "</p>"
+                        result_div += "<p class='form-control' id=" +
+                            response.result[i][0] + " onclick='myfunc(this)'>" + response.result[
+                                i][1] +
                             "</p>"
                     }
 
@@ -112,16 +112,45 @@
                     $("#result").html(result_div)
                 },
             });
-            // $(".resulted").on("click", function (event) {
-            //     $("#startq").val($(this.id).text());
-            // });
 
         });
+        $('#endq').change(function () {
+            var val1 = $("#endq").val();
+            document.getElementById('result2').style.display = "block";
+            $.ajax({
+                url: "/search",
+                type: "get",
+                data: {
+                    val1: val1
+                },
+                success: function (response) {
+                    result_div = ''
+                    for (i = 0; i < response.result.length; i++) {
+                        result_div += "<div class='form-control' type='button' id=" +
+                            response.result[i][0] + " onclick='myfunc2(this)'>" + response.result[
+                                i][1] +
+                            "</div>"
+                    }
+                    $("#result2").html(result_div)
+                },
+            })
+        })
     });
 
-    function myfunc(id) {
-        console.log(id)
+    function myfunc(o) {
+        document.getElementById('startq').value = o.innerHTML;
+        document.getElementById('startqi').value = o.id;
+        document.getElementById('result').style.display = "none";
     }
+
+    function myfunc2(o) {
+        document.getElementById('endq').value = o.innerHTML;
+        document.getElementById('endqi').value = o.id;
+        document.getElementById('result2').style.display = "none";
+    }
+    // function myfunc(id) {
+    //     console.log(id)
+    // }
 
 
     // Example starter JavaScript for disabling form submissions if there are invalid fields
