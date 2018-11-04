@@ -110,13 +110,13 @@
 
     var makes = {{ make|tojson }};
     var models = {{ model|tojson }};
+    var years = {{ year|tojson }};
 
-    console.log(makes)
-    console.log(models)
+    console.log(years)
 
-    var form = $('form');
     var make = $('select#make');
     var model = $('select#model');
+    var year = $('select#year');
 
     for (var key in makes) {
         make.append($('<option/>', {'value': makes[key], 'text': makes[key]}));
@@ -124,16 +124,27 @@
 
     make.change(function(ev) {
         model.empty();
-        model.append($('<option/>'));
+        model.append($('<option/>', {'selected':"", 'disabled':"", 'value':"", 'text':"Model"}));
 
-        for (var i in models[make]) {
-            model.append($('<option/>', {'value': model[i], 'text': model[i]}));
+        var selectedMake = $('select#make option:selected()')[0].innerHTML;
+
+        var models_sorted = models[selectedMake].sort();
+        for (var key in models_sorted) {
+            model.append($('<option/>', {'value': models[selectedMake][key], 'text': models[selectedMake][key]}));
         }
     });
 
-    form.submit(function(ev) {
-        ev.preventDefault();
-        //alert("playing " + game.val() + " on " + system.val());
+    model.change(function(ev) {
+        year.empty();
+        year.append($('<option/>', {'selected':"", 'disabled':"", 'value':"", 'text':"Year"}));
+
+        var selectedModel = $('select#model option:selected()')[0].innerHTML;
+        var selectedMake = $('select#make option:selected()')[0].innerHTML;
+
+        var years_sorted = years[selectedMake][selectedModel].sort();
+        for (var key in years_sorted) {
+            year.append($('<option/>', {'value': years[selectedMake][selectedModel][key], 'text': years[selectedMake][selectedModel][key]}));
+        }
     });
 </script>
 
