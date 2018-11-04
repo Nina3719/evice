@@ -212,8 +212,18 @@ def history():
     userid = session["user_id"]
 
     result = Post.query.filter_by(user_id=userid).all()
+    ice = list(
+        set([post.price for post in Post.query.filter_by(user_id=userid).all()]))
+    # ev = list(
+    #     set([post.ev_result for post in Post.query.filter_by(user_id=userid).all()]))
+    date = ice = list(
+        set([post.date_posted for post in Post.query.filter_by(user_id=userid).all()]))
 
-    return render_template("history.html", result=result)
+    # print(ice)
+    # print(date)
+    # ev=ev,
+
+    return render_template("history.html", result=result, ice=ice, date=date)
 
 
 @app.route("/login", methods=["GET", "POST"])
