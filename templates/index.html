@@ -1,23 +1,27 @@
 <!--Template for Calculating-->
 {% extends "layout.html" %} {% block title %} Home {% endblock %} {% block main %}
-<h2> Calculate How Much You Could've Saved! </h2>
+<h2 style="margin-bottom: 1rem;"> Calculate How Much You Could've Saved! </h2>
 <div class="container-fluid">
     <form action="/" method="post" class="needs-validation" novalidate>
         <div class="form-group">
             <select name="make" class="form-control" id="make" required>
-                <option disabled="" value="" selected="">Make</option>
+                <option style="text-align: center;" disabled="" value="" selected="">Make</option>
                 <!-- {% for name in make %}
                 <option value="{{ name }}">{{ name }}</option>
                 {% endfor %} -->
             </select>
+        </div>
+        <div class="form-group">
             <select name="model" class="form-control" id="model" required>
-                <option disabled="" value="" selected="">Model</option>
+                <option style="text-align: center;" disabled="" value="" selected="">Model</option>
                 <!-- {% for name in model %}
                 <option value="{{ name }}">{{ name }}</option>
                 {% endfor %} -->
             </select>
+        </div>
+        <div class="form-group">
             <select name="year" class="form-control" id="year" required>
-                <option disabled="" value="" selected="">Year</option>
+                <option style="text-align: center;" disabled="" value="" selected="">Year</option>
                 <!-- {% for name in year %}
                 <option value="{{ name }}">{{ name }}</option>
                 {% endfor %} -->
@@ -48,7 +52,7 @@
                 <a class="btn btn-primary" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree" id="headingThree" style="color:white;" onclick="initMap()" value="Auto GPS">Auto GPS</a>
                 <div class="form-group" style="margin-top:1rem;">
                     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                        <input class="form-control" name="miles" id="validationCustom04" placeholder="Miles Travelled" type="text" required>
+                        <input class="form-control" name="miles" id="validationCustom04" placeholder="Miles Travelled" type="text" value="" required>
                     </div>
                     <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
                         <div class="form-group">
@@ -56,14 +60,16 @@
                             <input class="form-control" name="start" id="startq" placeholder="Start Location" type="text" value="" required>
                             <div id="result" style="display:flex; flex-direction:column; margin:auto; z-index: 1; max-height: 200px; width: 300px; overflow-y:auto"></div>
                         </div>
+                    <div class="form-group"></div>
+                    <div class="form-group"></div>
                         <div class="form-group">
                             <input class="form-control" name="endqi" id="endqi" type="text" value="" style="display:none;">
                             <input class="form-control" name="end" id="endq" placeholder="End Location" type="text" value="" required>
                             <div id="result2" style="display:flex; flex-direction:column; margin:auto; z-index: 1; max-height: 200px; width: 300px; overflow-y:auto"></div>
                         </div>
-                        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-                            <p class="form-control" name="miles" id="travelledDistance"></p>  
-                        </div>
+                    </div>
+                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                        <p class="form-control" name="miles" id="travelledDistance"></p>  
                     </div>
                 </div>
             </div>
