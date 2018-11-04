@@ -4,32 +4,48 @@
 
 <h2> Trip History </h2>
 <div class="container-fluid">
-
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col"> Date </th>
-                <th scope="col"> ICE Result</th>
-                <th scope="col">EV Result </th>
-                <th scope="col"> Miles </th>
-                <th scope="col"> Mileage </th>
-                <th scope="col"> Car Infomration </th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for category in result %}
-            <tr>
-                <th scope="col"> {{ category.date_posted }} </th>
-                <td scope="col"> {{ category.result }} </td>
-                <td scope="col"> {{ category.ev_result }} </td>
-                <td scope="col"> {{ category.miles }} </td>
-                <td scope="col"> {{ category.mileage }} </td>
-                <td scope="col"> {{ category.make }} | {{ category.model }} | {{ category.year }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div id="accordion">
+        <a class="btn btn-primary" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"
+            id="headingOne" style="color:white; width:100px; margin-bottom: 1rem;">Table</a>
+        <a class="btn btn-primary" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo"
+            id="headingTwo" style="color:white; width:100px; margin-bottom: 1rem;">Graph</a>
+        <a class="btn btn-primary" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree"
+            id="headingThree" style="color:white; width:100px; margin-bottom: 1rem;">Statistics</a>
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">    
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col"> Date </th>
+                        <th scope="col"> ICE Result</th>
+                        <th scope="col">EV Result </th>
+                        <th scope="col"> Miles </th>
+                        <th scope="col"> Mileage </th>
+                        <th scope="col"> Car Infomration </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category in result %}
+                    <tr>
+                        <th scope="col"> {{ category.date_posted }} </th>
+                        <td scope="col"> {{ category.result }} </td>
+                        <td scope="col"> {{ category.ev_result }} </td>
+                        <td scope="col"> {{ category.miles }} </td>
+                        <td scope="col"> {{ category.mileage }} </td>
+                        <td scope="col"> {{ category.make }} | {{ category.model }} | {{ category.year }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion" onclick="myFunction({)">
+            <!-- {{ ice }} {{ date }} -->
+            hello
+            <canvas id="chart" width="600" height="400"></canvas>
+        </div>
+        <div id="collapseThree" class="collapse show" aria-labelledby="headingThree" data-parent="#accordion">
+            stats
+        </div>
+    </div>
 </div>
-</h2>
 
 {% endblock %}
