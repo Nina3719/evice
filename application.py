@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import os, pickle, json, requests
+=======
+import os
+>>>>>>> 9dde61ca750e06c24457903554088d69adc4d291
 
 import sqlite3
 from flask import Flask, flash, jsonify, redirect, render_template, request, session, g
@@ -9,7 +13,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import googlemaps
-
+from urllib.request import Request, urlopen
+from bs4 import BeautifulSoup
 from helpers import apology, login_required, lookup, usd
 
 # Configure application
@@ -103,14 +108,18 @@ def index():
         model = request.form.get("model")
 
         mileage = Car.query.filter_by(make=request.form.get("make"), year=request.form.get(
-            "year"), model=request.form.get("model"))
+            "year"), model=request.form.get("model")).first()
 
         if not mileage:
             return apology("Car with make year and model not found", 400)
 
+<<<<<<< HEAD
         kwh = mileage.first().kwh
 
         mileage = mileage.first().mileage
+=======
+        mileage = mileage.first()
+>>>>>>> 9dde61ca750e06c24457903554088d69adc4d291
 
         # use google maps api to get miles
         miles = request.form.get("miles")
@@ -155,30 +164,12 @@ def index():
                                year=year, make=make, mileage=mileage, kwh = kwh, miles=miles, price=price, result=result, ev=Car.query.filter_by(id=99999).first(), ev_result = ev_result)
     else:
         # make, model, year
-        make = pickle.load(open('make.pickle', 'rb')) #list(set([car.make for car in Car.query.all()]))
-        #make.sort()
-        #with open('make.pickle', 'wb') as f:
-        #    pickle.dump(make, f)
-        #model = list(set([car.model for car in Car.query.all()]))
-        model = pickle.load(open('model.pickle', 'rb')) #{}
-        #for carmake in make:
-        #    model[carmake] = list(set([
-        #        car.model for car in list(set(Car.query.filter_by(make=carmake)))
-        #    ]))
-        #model.sort()
-        #with open('model.pickle', 'wb') as f:
-        #    pickle.dump(model, f)
-        #year = list(set([car.year for car in Car.query.all()]))
-        #year.sort()
-        year = pickle.load(open('year.pickle', 'rb')) #{}
-        #for carmake in make:
-        #    year[carmake] = {}
-        #    for carmodel in model[carmake]:
-        #        year[carmake][carmodel] = list(set([
-        #            car.year for car in list(set(Car.query.filter_by(make=carmake, model=carmodel)))
-        #        ]))
-        #with open('year.pickle', 'wb') as f:
-        #    pickle.dump(year, f)
+        make = list(set([car.make for car in Car.query.all()]))
+        make.sort()
+        model = list(set([car.model for car in Car.query.all()]))
+        model.sort()
+        year = list(set([car.year for car in Car.query.all()]))
+        year.sort()
 
         return render_template("index.html", make=make, model=model, year=year)
 
@@ -298,3 +289,21 @@ def register():
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("register.html")
+
+@app.route("/location/<pos>", methods=["GET", "POST"])
+def price(pos):
+    req = Request('https://gasprices.aaa.com/?state='+pos, headers={'User-Agent': 'Mozilla/5.0'})
+    webpage = urlopen(req).read()
+#    quote_page = ''
+#    with urllib.request.urlopen(quote_page) as url:
+#        page = url.read()
+    soup = BeautifulSoup(webpage, 'html.parser')
+    
+    price_box = soup.findAll('p', attrs={'class':'numb'})[1]
+    
+    price = price_box.text
+
+    return jsonify({'price' : price})
+
+
+
