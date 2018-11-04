@@ -17,9 +17,12 @@
                     <li class="list-group-item">Model: {{ model }}</li>
                     <li class="list-group-item">Year: {{ year }}</li>
                     <li class="list-group-item">Make: {{ make }}</li>
-                    <li class="list-group-item">Mileage: {{ mileage }}</li>
+                    <li class="list-group-item">Mileage (miles / gallon): {{ mileage }}</li>
+                    {% if kwh != "0.0" %}
+                    <li class="list-group-item">E⚡ (kWh) / 100 miles: {{ kwh }}</li>
+                    {% endif %}
                     <li class="list-group-item">Miles: {{ miles }}</li>
-                    <li class="list-group-item">Result: {{ result }}</li>
+                    <li class="list-group-item">Cost ($): {{ result }}</li>
                 </ul>
                 <!-- <div class="card-body">
             <a href="#" class="card-link">Card link</a>
@@ -42,12 +45,15 @@
                 <p class="card-text">Results of your with EV.</p>
             </div>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item">Model: {{ model }}</li>
-                <li class="list-group-item">Year: {{ year }}</li>
-                <li class="list-group-item">Make: {{ make }}</li>
-                <li class="list-group-item">Mileage: {{ mileage }}</li>
+                <li class="list-group-item">Model: {{ ev.model }}</li>
+                <li class="list-group-item">Year: {{ ev.year }}</li>
+                <li class="list-group-item">Make: {{ ev.make }}</li>
+                <li class="list-group-item">Mileage (miles / gallon): {{ ev.mileage }}</li>
+                {% if ev.kwh != "0.0" %}
+                <li class="list-group-item">E⚡ (kWh) / 100 miles: {{ ev.kwh }}</li>
+                {% endif %}
                 <li class="list-group-item">Miles: {{ miles }}</li>
-                <li class="list-group-item">Result: {{ result }}</li>
+                <li class="list-group-item">Cost ($): {{ ev_result }}</li>
             </ul>
             <!-- <div class="card-body">
                 <a href="#" class="card-link">Card link</a>

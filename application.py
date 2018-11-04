@@ -1,4 +1,4 @@
-import os, pickle
+import os, pickle, json, requests
 
 import sqlite3
 from flask import Flask, flash, jsonify, redirect, render_template, request, session, g
@@ -64,11 +64,13 @@ class Post(db.Model):
     year = db.Column(db.String(100), nullable=False)
     make = db.Column(db.String(100), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False,
-                            default=datetime.utcnow)
+                            default=datetime.now)
     mileage = db.Column(db.String(100), nullable=False)
     result = db.Column(db.Text, nullable=False)
     price = db.Column(db.String(100), nullable=False)
     miles = db.Column(db.String(100), nullable=False)
+    ev_result = db.Column(db.Text, nullable=False)
+
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
@@ -81,6 +83,7 @@ class Car(db.Model):
     model = db.Column(db.String(100))
     year = db.Column(db.String(100))
     mileage = db.Column(db.String(100))
+    kwh = db.Column(db.String(100))
 
     def __repr__(self):
         return str(self.make) + ", " + str(self.model) + ", " + str(self.year)
@@ -105,6 +108,8 @@ def index():
         if not mileage:
             return apology("Car with make year and model not found", 400)
 
+        kwh = mileage.first().kwh
+
         mileage = mileage.first().mileage
 
         # use google maps api to get miles
@@ -113,20 +118,41 @@ def index():
         # used google map api to get range of gas price in the area
         price = request.form.get("price")
 
+        # use some api to get electricity price
+
+        e_price = 0.13
+
+        url = "https://developer.nrel.gov/api/utility_rates/v3.json?api_key=DEMO_KEY&"+ "lat=42.29&lon=-71.30"
+        try:
+            res = requests.get(url)
+            res = res.text
+            data = json.loads(res)
+            e_price = data["outputs"]['residential']
+        except requests.ConnectionError:
+            print(ConnectionError)
+
+
+
+
         # Calculation based on miles and make model year info
         # price per gallon divided by mileage is how much per mile
         result = (float(price) / float(mileage)) * float(miles)
+        if (float(kwh) > 0.1):
+            result = float(miles) / 100.0 * float(kwh)* e_price
+
+        ev_result = float(miles) / 100.0 * 40 * e_price    
 
         userid = session["user_id"]
         post = Post(model=model,
-                    year=year, make=make, mileage=mileage, miles=miles, price=price, result=result, user_id=userid)
+                    year=year, make=make, mileage=mileage, miles=miles, price=price, result=result, user_id=userid, ev_result=ev_result)
 
         db.session.add(post)
         db.session.commit()
         print('success')
 
+
         return render_template("/result.html", model=model,
-                               year=year, make=make, mileage=mileage, miles=miles, price=price, result=result)
+                               year=year, make=make, mileage=mileage, kwh = kwh, miles=miles, price=price, result=result, ev=Car.query.filter_by(id=99999).first(), ev_result = ev_result)
     else:
         # make, model, year
         make = pickle.load(open('make.pickle', 'rb')) #list(set([car.make for car in Car.query.all()]))
