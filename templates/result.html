@@ -1,54 +1,51 @@
 <!--Template for Calculating-->
 
 {% extends "layout.html" %} {% block title %} Result {% endblock %} {% block main %}
-<div class="container-fluid">
 
-    <div class="container-fluid" id='form'>
-        <h2> ICE V. EV </h2>
-        <div class="d-flex flex-row">
-            <div class="d-flex align-items-center">
-                <div class="card" style="width: 20rem;">
-                    <img class="card-img-top" src="/static/ice.jpg" alt="Card image cap">
-                    <div class="card-body">
-                        <h5 class="card-title"> Internal Combustion Engine</h5>
-                        <p class="card-text">Results of your trip with ICE.</p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Model: {{ model }}</li>
-                        <li class="list-group-item">Year: {{ year }}</li>
-                        <li class="list-group-item">Make: {{ make }}</li>
-                        <li class="list-group-item">Miles: {{ miles }}</li>
-                        <li class="list-group-item">Result: {{ result }}</li>
-                    </ul>
-
-
-                </div>
+<h2> ICE V. EV </h2>
+<div class="d-flex flex-row">
+    <div class="d-flex align-items-center">
+        <div class="card" style="width: 20rem;">
+            <img class="card-img-top" src="/static/ice.jpg" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title"> Internal Combustion Engine</h5>
+                <p class="card-text">Results of your trip with ICE.</p>
             </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Model: {{ model }}</li>
+                <li class="list-group-item">Year: {{ year }}</li>
+                <li class="list-group-item">Make: {{ make }}</li>
+                <li class="list-group-item">Miles: {{ miles }}</li>
+                <li class="list-group-item">Result: $ {{ result }}</li>
+            </ul>
 
 
-            <div class="col-md-auto" style="width: 24rem;">
-                <!-- Variable width content -->
-            </div>
-
-
-            <div class="card" style="width: 20rem;">
-                <img class="card-img-top" src="/static/Electric-Vehicles.jpg" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title"> Electric Vehicles </h5>
-                    <p class="card-text">Results of your with EV.</p>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Model: {{ model }}</li>
-                    <li class="list-group-item">Year: {{ year }}</li>
-                    <li class="list-group-item">Make: {{ make }}</li>
-                    <li class="list-group-item">Miles: {{ miles }}</li>
-                    <li class="list-group-item">Result: {{ result }}</li>
-                </ul>
-
-            </div>
         </div>
     </div>
+
+
+    <div class="col-md-auto" style="width: 24rem;">
+        <!-- Variable width content -->
+    </div>
+
+
+    <div class="card" style="width: 20rem;">
+        <img class="card-img-top" src="/static/Electric-Vehicles.jpg" alt="Card image cap">
+        <div class="card-body">
+            <h5 class="card-title"> Electric Vehicles </h5>
+            <p class="card-text">Results of your with EV.</p>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Model: {{ model }}</li>
+            <li class="list-group-item">Year: {{ year }}</li>
+            <li class="list-group-item">Make: {{ make }}</li>
+            <li class="list-group-item">Miles: {{ miles }}</li>
+            <li class="list-group-item">Result: $ {{ result }}</li>
+        </ul>
+
+    </div>
 </div>
+
 
 
 

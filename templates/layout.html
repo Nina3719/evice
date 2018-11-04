@@ -7,6 +7,24 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- <style>
+        /* Always set the map height explicitly to define the size of the div
+             * element that contains the map. */
+
+        #map {
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Optional: Makes the sample page fill the window. */
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style> -->
 
     <!-- documentation at http://getbootstrap.com/docs/4.1/, alternative themes at https://bootswatch.com/ -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
@@ -14,7 +32,7 @@
     <link href="/static/styles.css" rel="stylesheet">
 
     <!-- https://developers.google.com/maps/documentation/javascript/ -->
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ key | urlencode }}&v=3.exp"></script>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key={{ key | urlencode }}&v=3.exp"></script> -->
 
     <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAtCmvDQ7BP5BjtjFlkCffXQnQJIo2bTEY&callback=initMap">
     </script> -->
@@ -45,8 +63,8 @@
 
 </head>
 
-<body>
 
+<body>
     <nav class="navbar navbar-expand-md navbar-light bg-light border">
         <a class="navbar-brand" href="/">
             <span class="blue">E</span>
@@ -84,17 +102,101 @@
         </div>
     </nav>
 
-    {% if get_flashed_messages() %}
-    <header>
-        <div class="alert alert-primary border text-center" role="alert">
-            {{ get_flashed_messages() | join(" ") }}
-        </div>
-    </header>
-    {% endif %}
+    <div class="container-fluid" id="container">
+        <div id="map"> </div>
 
-    <main class="container p-5">
-        {% block main %}{% endblock %}
-    </main>
+        <div class="container-fluid" id="inner">
+
+
+            {% if get_flashed_messages() %}
+            <header>
+                <div class="alert alert-primary border text-center" role="alert">
+                    {{ get_flashed_messages() | join(" ") }}
+                </div>
+            </header>
+            {% endif %}
+
+            <main class="container p-5">
+                {% block main %}{% endblock %}
+            </main>
+        </div>
+
+    </div>
+</body>
+
+
+
+<!-- <script>
+        var map;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: {
+                    lat: -34.397,
+                    lng: 150.644
+                },
+                zoom: 8
+            });
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key='AIzaSyDkjjHLIT5tVR6b2Lu8K8MFVAfiM3XXR0c'&callback=initMap" async
+        defer></script> -->
+<script>
+    // Execute when the DOM is fully loaded
+    $(document).ready(function () {
+
+        // Styles for map
+        // https://developers.google.com/maps/documentation/javascript/styling
+        let styles = [
+
+            // Hide Google's labels
+            {
+                featureType: "all",
+                elementType: "labels",
+                stylers: [{
+                    visibility: "on"
+                }]
+            },
+
+            // Hide roads
+            {
+                featureType: "road",
+                elementType: "geometry",
+                stylers: [{
+                    visibility: "on"
+                }]
+            }
+
+        ];
+
+        // Options for map
+        // https://developers.google.com/maps/documentation/javascript/reference#MapOptions
+        let options = {
+            center: {
+                lat: 37.4236,
+                lng: -122.1619
+            }, // Stanford, California
+            disableDefaultUI: true,
+            // mapTypeId: google.maps.MapTypeId.ROADMAP,
+            maxZoom: 14,
+            panControl: true,
+            styles: styles,
+            zoom: 13,
+            zoomControl: true
+        };
+
+        // Get DOM node in which map will be instantiated
+        let canvas = $("#map").get(0);
+
+        // Instantiate map
+        map = new google.maps.Map(canvas, options);
+
+        // Configure UI once Google Map is idle (i.e., loaded)
+        google.maps.event.addListenerOnce(map, "idle", configure);
+
+    });
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ key | urlencode }}&v=3.exp"></script>
 
 
 

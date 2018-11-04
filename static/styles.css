@@ -1,3 +1,52 @@
+html,
+body,
+#map,
+.container-fluid {
+  /* Height of these elements */
+  height: 100%;
+
+  width: 100%;
+
+  /* No margin around these elements */
+  margin: 0;
+
+  position: absolute;
+
+  /* Disable scrollbars */
+  overflow: hidden;
+
+  /* No padding within these elements */
+  padding: 0;
+
+  top: 0;
+  left: 0;
+}
+
+#container {
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+#inner {
+  /* Position form "absolutely" where we want it */
+  position: absolute;
+
+  /* Form's width */
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  top: 0;
+  left: 0;
+  margin: 0 auto;
+
+  width: 100%;
+  height: max-content;
+
+  z-index: 10;
+}
+
 nav .navbar-brand {
   /* size for brand */
   font-size: xx-large;
