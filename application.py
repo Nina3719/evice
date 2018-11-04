@@ -140,16 +140,20 @@ def index():
 
         mileage = mileage.first().mileage
 
+        miles = request.form.get("miles")
         # use google maps api to get miles
         #miles = request.form.get("miles")
         start = request.form.get("startqi")
         end = request.form.get("endqi")
-        startlatlng = Place.query.filter_by(id=start).first(
-        ).lat, Place.query.filter_by(id=start).first().lng
-        endlatlng = Place.query.filter_by(id=end).first(
-        ).lat, Place.query.filter_by(id=end).first().lng
-        miles = geopy.distance.vincenty(
-            startlatlng, endlatlng).m if startlatlng and endlatlng else request.form.get("miles")
+        try:
+            startlatlng = Place.query.filter_by(id=start).first(
+            ).lat, Place.query.filter_by(id=start).first().lng
+            endlatlng = Place.query.filter_by(id=end).first(
+            ).lat, Place.query.filter_by(id=end).first().lng
+            miles = geopy.distance.vincenty(
+                startlatlng, endlatlng).m / 1609.344
+        except:
+            None
 
         # used google map api to get range of gas price in the area
         price = request.form.get("price")
