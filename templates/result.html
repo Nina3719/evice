@@ -17,10 +17,13 @@
                     <li class="list-group-item">Model: {{ model }}</li>
                     <li class="list-group-item">Year: {{ year }}</li>
                     <li class="list-group-item">Make: {{ make }}</li>
+<<<<<<< HEAD
                     <li class="list-group-item">Mileage (miles / gallon): {{ mileage }}</li>
                     {% if kwh != "0.0" %}
                     <li class="list-group-item">E⚡ (kWh) / 100 miles: {{ kwh }}</li>
                     {% endif %}
+=======
+>>>>>>> 9dde61ca750e06c24457903554088d69adc4d291
                     <li class="list-group-item">Miles: {{ miles }}</li>
                     <li class="list-group-item">Cost ($): {{ result }}</li>
                 </ul>
@@ -45,6 +48,7 @@
                 <p class="card-text">Results of your with EV.</p>
             </div>
             <ul class="list-group list-group-flush">
+<<<<<<< HEAD
                 <li class="list-group-item">Model: {{ ev.model }}</li>
                 <li class="list-group-item">Year: {{ ev.year }}</li>
                 <li class="list-group-item">Make: {{ ev.make }}</li>
@@ -52,6 +56,11 @@
                 {% if ev.kwh != "0.0" %}
                 <li class="list-group-item">E⚡ (kWh) / 100 miles: {{ ev.kwh }}</li>
                 {% endif %}
+=======
+                <li class="list-group-item">Model: {{ model }}</li>
+                <li class="list-group-item">Year: {{ year }}</li>
+                <li class="list-group-item">Make: {{ make }}</li>
+>>>>>>> 9dde61ca750e06c24457903554088d69adc4d291
                 <li class="list-group-item">Miles: {{ miles }}</li>
                 <li class="list-group-item">Cost ($): {{ ev_result }}</li>
             </ul>

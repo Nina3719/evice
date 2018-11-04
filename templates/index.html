@@ -4,23 +4,23 @@
 <div class="container-fluid">
     <form action="/" method="post" class="needs-validation" novalidate>
         <div class="form-group">
-            <select name="make" class="form-control" id="make" required>
+            <select name="make" class="form-control" id="validationCustom04" required>
                 <option disabled="" value="" selected="">Make</option>
-                <!-- {% for name in make %}
+                {% for name in make %}
                 <option value="{{ name }}">{{ name }}</option>
-                {% endfor %} -->
+                {% endfor %}
             </select>
-            <select name="model" class="form-control" id="model" required>
+            <select name="model" class="form-control" id="validationCustom04" required>
                 <option disabled="" value="" selected="">Model</option>
-                <!-- {% for name in model %}
+                {% for name in model %}
                 <option value="{{ name }}">{{ name }}</option>
-                {% endfor %} -->
+                {% endfor %}
             </select>
-            <select name="year" class="form-control" id="year" required>
+            <select name="year" class="form-control" id="validationCustom04" required>
                 <option disabled="" value="" selected="">Year</option>
-                <!-- {% for name in year %}
+                {% for name in year %}
                 <option value="{{ name }}">{{ name }}</option>
-                {% endfor %} -->
+                {% endfor %}
             </select>
         </div>
         <div class="form-group">
@@ -68,6 +68,7 @@
         </div>
     </form>
 </div>
+<script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.19.0.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script>
 // Example starter JavaScript for disabling form submissions if there are invalid fields
@@ -89,50 +90,6 @@
     }, false);
 })();
 </script>
-
-<script>
-    "use strict";
-
-    var makes = {{ make|tojson }};
-    var models = {{ model|tojson }};
-    var years = {{ year|tojson }};
-
-    console.log(years)
-
-    var make = $('select#make');
-    var model = $('select#model');
-    var year = $('select#year');
-
-    for (var key in makes) {
-        make.append($('<option/>', {'value': makes[key], 'text': makes[key]}));
-    }
-
-    make.change(function(ev) {
-        model.empty();
-        model.append($('<option/>', {'selected':"", 'disabled':"", 'value':"", 'text':"Model"}));
-
-        var selectedMake = $('select#make option:selected()')[0].innerHTML;
-
-        var models_sorted = models[selectedMake].sort();
-        for (var key in models_sorted) {
-            model.append($('<option/>', {'value': models[selectedMake][key], 'text': models[selectedMake][key]}));
-        }
-    });
-
-    model.change(function(ev) {
-        year.empty();
-        year.append($('<option/>', {'selected':"", 'disabled':"", 'value':"", 'text':"Year"}));
-
-        var selectedModel = $('select#model option:selected()')[0].innerHTML;
-        var selectedMake = $('select#make option:selected()')[0].innerHTML;
-
-        var years_sorted = years[selectedMake][selectedModel].sort();
-        for (var key in years_sorted) {
-            year.append($('<option/>', {'value': years[selectedMake][selectedModel][key], 'text': years[selectedMake][selectedModel][key]}));
-        }
-    });
-</script>
-
 <script type="text/javascript">
 //get the current location using google maps api
 var map, infoWindow;
