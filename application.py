@@ -6,6 +6,7 @@ from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.wsgi import DispatcherMiddleware
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import googlemaps
@@ -19,16 +20,24 @@ import csv
 from sqlalchemy import or_
 import flask
 import geopy.distance
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+from dash import Dash
+from werkzeug.serving import run_simple
 
 from helpers import apology, login_required, lookup, usd
 
 # Configure application
 app = Flask(__name__)
+dash_app1 = Dash(__name__, server=app, url_base_pathname='/history/graph/')
+
 
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///site.db'
 app.config['SECRET_KEY'] = 'any secret string'
+
 
 gmaps = googlemaps.Client(key='AIzaSyAtCmvDQ7BP5BjtjFlkCffXQnQJIo2bTEY')
 
@@ -118,6 +127,9 @@ class Form(FlaskForm):
     year = SelectField('year', choices=[])
 
 
+userid = 1
+
+
 @app.route("/", methods=["GET", "POST"])
 @login_required
 def index():
@@ -126,7 +138,9 @@ def index():
 
     if request.method == "POST":
 
+        global userid
         userid = session["user_id"]
+        print(userid)
 
         # get data from html
         make = request.form.get("make")
@@ -183,6 +197,36 @@ def index():
         return render_template("index.html", make=make, model=model, year=year, nina=nina, key="AIzaSyAZHjXnG0DmFQmUgZN-Yld2RG_aVw3X7d8")
 
 
+dash_app1.layout = html.Div(children=[
+    html.H1(children='Trip History'),
+
+
+    dcc.Graph(
+        id='example-graph',
+        figure={
+            'data': [
+                {'x': sorted(list(
+                    set([post.date_posted for post in Post.query.filter_by(user_id=userid).all()]))), 'y': list(
+                    set([post.price for post in Post.query.filter_by(user_id=userid).all()])), 'type': 'scatter', 'mode': 'lines', 'name':'ice'},
+                {'x': sorted(list(
+                    set([post.date_posted for post in Post.query.filter_by(user_id=userid).all()]))), 'y': [2, 4, 5], 'type': 'scatter', 'mode': 'lines', 'name':'ev'},
+            ],
+            'layout': {
+                'title': 'Savings: EV v. ICE',
+                'xaxis': {
+                    'title': 'Date Time'
+                },
+                'yaxis': {
+                    'title': 'Cost'
+                }
+            }
+        }
+    ),
+    html.A(href='/history', children='Return', className="btn btn-primary")
+
+])
+
+
 @app.route('/search')
 def resultq():
     """Search for places that match start query"""
@@ -210,13 +254,15 @@ def resultq():
 def history():
     """Show history of transactions"""
     userid = session["user_id"]
+    print(userid)
 
     result = Post.query.filter_by(user_id=userid).all()
     ice = list(
         set([post.price for post in Post.query.filter_by(user_id=userid).all()]))
     # ev = list(
     #     set([post.ev_result for post in Post.query.filter_by(user_id=userid).all()]))
-    date = ice = list(
+    #
+    date = list(
         set([post.date_posted for post in Post.query.filter_by(user_id=userid).all()]))
 
     # print(ice)
@@ -224,6 +270,11 @@ def history():
     # ev=ev,
 
     return render_template("history.html", result=result, ice=ice, date=date)
+
+
+# @app.route('/history/graph/')
+# def render_dashboard():
+#     return redirect('/dash1/')
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -331,6 +382,12 @@ def register():
     else:
         return render_template("register.html")
 
+
+app = DispatcherMiddleware(app, {
+    '/dash1': dash_app1.server,
+})
+
+run_simple('0.0.0.0', 8080, app, use_reloader=True, use_debugger=True)
 
 if __name__ == "__main__":
     pass

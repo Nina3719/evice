@@ -7,8 +7,7 @@
     <div id="accordion">
         <a class="btn btn-primary" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"
             id="headingOne" style="color:white; width:100px; margin-bottom: 1rem;">Table</a>
-        <a class="btn btn-primary" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo"
-            id="headingTwo" style="color:white; width:100px; margin-bottom: 1rem;">Graph</a>
+        <a class="btn btn-primary" style="color:white; width:100px; margin-bottom: 1rem;" href="/history/graph">Graph</a>
         <a class="btn btn-primary" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree"
             id="headingThree" style="color:white; width:100px; margin-bottom: 1rem;">Statistics</a>
 
@@ -38,9 +37,8 @@
                 </tbody>
             </table>
         </div>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion" onclick="myFunction({)">
-            <!-- {{ ice }} {{ date }} -->
-            hello
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+
             <canvas id="chart" width="600" height="400"></canvas>
         </div>
         <div id="collapseThree" class="collapse show" aria-labelledby="headingThree" data-parent="#accordion">
