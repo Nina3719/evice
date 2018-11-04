@@ -1,25 +1,22 @@
 <!--Template for Calculating-->
-
 {% extends "layout.html" %} {% block title %} Home {% endblock %} {% block main %}
-
 <h2> Calculate How Much You Could've Saved! </h2>
 <div class="container-fluid">
     <form action="/" method="post" class="needs-validation" novalidate>
-
         <div class="form-group">
-            <select name="make" class="form-control" id="make" required>
+            <select name="make" class="form-control" id="validationCustom04" required>
                 <option disabled="" value="" selected="">Make</option>
-                <!-- {% for name in make %}
+                {% for name in make %}
                 <option value="{{ name }}">{{ name }}</option>
-                {% endfor %} -->
+                {% endfor %}
             </select>
-            <select name="model" class="form-control" id="model" required>
+            <select name="model" class="form-control" id="validationCustom04" required>
                 <option disabled="" value="" selected="">Model</option>
-                <!-- {% for name in model %}
+                {% for name in model %}
                 <option value="{{ name }}">{{ name }}</option>
-                {% endfor %} -->
+                {% endfor %}
             </select>
-            <select name="year" class="form-control" id="year" required>
+            <select name="year" class="form-control" id="validationCustom04" required>
                 <option disabled="" value="" selected="">Year</option>
                 {% for name in year %}
                 <option value="{{ name }}">{{ name }}</option>
@@ -46,12 +43,9 @@
                 To Be Implemented
             </div> -->
             <div id="accordion">
-                <a class="btn btn-primary" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"
-                    id="headingOne" style="color:white;">Input Miles</a>
-                <a class="btn btn-primary" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo"
-                    id="headingTwo" style="color:white;">Input Locations</a>
-                <a class="btn btn-primary" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree"
-                    id="headingThree" style="color:white;">Auto GPS</a>
+                <a class="btn btn-primary" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" id="headingOne" style="color:white;">Input Miles</a>
+                <a class="btn btn-primary" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo" id="headingTwo" style="color:white;">Input Locations</a>
+                <a class="btn btn-primary" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree" id="headingThree" style="color:white;" onclick="initMap()" value="Auto GPS">Auto GPS</a>
                 <div class="form-group" style="margin-top:1rem;">
                     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                         <input class="form-control" name="miles" id="validationCustom04" placeholder="Miles Travelled" type="text" required>
@@ -61,88 +55,142 @@
                         <input class="form-control" name="end" id="validationCustom04" placeholder="End Location" type="text" required>
                     </div>
                     <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-                        To Be Implemented
+                        <p class="form-control" name="miles" id="travelledDistance">  
                     </div>
                 </div>
             </div>
         </div>
-
         <div class="form-group">
             <input class="form-control" name="price" id="validationCustom04" placeholder="Price Per Gal" type="text" required>
         </div>
-
         <div class="form-group">
             <button class="btn btn-primary" type="submit">Calculate</button>
         </div>
-
     </form>
 </div>
-
-
+<script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.19.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script>
-    // Example starter JavaScript for disabling form submissions if there are invalid fields
-    (function () {
-        'use strict';
-        window.addEventListener('load', function () {
-            // Fetch all the forms we want to apply custom Bootstrap validation styles to
-            var forms = document.getElementsByClassName('needs-validation');
-            // Loop over them and prevent submission
-            var validation = Array.prototype.filter.call(forms, function (form) {
-                form.addEventListener('submit', function (event) {
-                    if (form.checkValidity() === false) {
-                        event.preventDefault();
-                        event.stopPropagation();
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.getElementsByClassName('needs-validation');
+        // Loop over them and prevent submission
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+</script>
+<script type="text/javascript">
+//get the current location using google maps api
+var map, infoWindow;
+var pos;
+var ori;
+var des;
+
+function initMap() {
+
+
+    // map = new google.maps.Map(document.getElementById('map'), {
+    //     center: { lat: -34.397, lng: 150.644 },
+    //     zoom: 6
+    // });
+    // infoWindow = new google.maps.InfoWindow;
+
+    // Try HTML5 geolocation.
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            pos = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+            if (document.getElementById("headingThree").innerText == "Auto GPS") {
+                ori = pos;
+                document.getElementById("headingThree").innerText = "Stop GPS";
+            } else {
+                // des = pos;
+                var directionsService = new google.maps.DirectionsService();
+                des={
+                    lat:42.4,
+                    lng:-71
+                };
+                var request = {
+                    origin: ori, // a city, full address, landmark etc
+                    destination: des,
+                    travelMode: google.maps.DirectionsTravelMode.DRIVING
+                };
+
+                directionsService.route(request, function(response, status) {
+                    if (status == google.maps.DirectionsStatus.OK) {
+                        console.log(response.routes.length);
+                        document.getElementById("travelledDistance").innerText = response.routes[0].legs[0].distance.value/1609.344;
+                        // alert(response.routes[0].legs[0].distance.value/1609.344); // the distance in metres
+                    } else {
+                        // oops, there's no route between these two locations
+                        // every time this happens, a kitten dies
+                        // so please, ensure your address is formatted properly
                     }
-                    form.classList.add('was-validated');
-                }, false);
-            });
-        }, false);
-    })();
-</script>
+                });
+                document.getElementById("headingThree").innerText = "Auto GPS";
+            }
+            // console.log(ori);
+            // console.log(des);
+            console.log(pos);
+            var arr;
+            var state;
+            jQuery.getJSON('https://maps.googleapis.com/maps/api/geocode/json?latlng=' + pos.lat + ',' + pos.lng + '&key=AIzaSyA5UbbMmUDD0EtU_aK73P6cgpI-GklZlVk',
+                function(data) {
+                    console.log(data["results"][5]["formatted_address"]);
+                    arr = data["results"][5]["formatted_address"].split(",");
+                    console.log(arr[1]);
+                    state = arr[1].trim();
+                    console.log(state);
 
-<script
-  src="https://code.jquery.com/jquery-3.3.1.min.js"
-  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-  crossorigin="anonymous"></script>
+                    //send to flask
+                    fetch('/location/' + state).then(function(response) {
+                        response.json().then(function(data) {
+                            console.log(data['price'].trim());
 
-<script>
-    "use strict";
+                        })
 
-    var makes = {{ make|tojson }};
-    var models = {{ model|tojson }};
-    var years = {{ year|tojson }};
+                    });
 
-    console.log(years)
+                    //console.log(web);
+                    // console.log(myWindow.document.getElementsByClassName("average-price")[1].innerText.split("\n"));
 
-    var make = $('select#make');
-    var model = $('select#model');
-    var year = $('select#year');
+                });
 
-    for (var key in makes) {
-        make.append($('<option/>', {'value': makes[key], 'text': makes[key]}));
+            // infoWindow.setPosition(pos);
+            // infoWindow.setContent('Location found.');
+            // infoWindow.open(map);
+            // map.setCenter(pos);
+
+        }, function() {
+            handleLocationError(true, infoWindow, map.getCenter());
+        });
+    } else {
+        // Browser doesn't support Geolocation
+        handleLocationError(false, infoWindow, map.getCenter());
     }
+}
 
-    make.change(function(ev) {
-        model.empty();
-        model.append($('<option/>', {'selected':"", 'disabled':"", 'value':"", 'text':"Model"}));
-
-        var selectedMake = $('select#make option:selected()')[0].innerHTML;
-        for (var key in models[selectedMake]) {
-            model.append($('<option/>', {'value': models[selectedMake][key], 'text': models[selectedMake][key]}));
-        }
-    });
-
-    model.change(function(ev) {
-        year.empty();
-        year.append($('<option/>', {'selected':"", 'disabled':"", 'value':"", 'text':"Year"}));
-
-        var selectedModel = $('select#model option:selected()')[0].innerHTML;
-        var selectedMake = $('select#make option:selected()')[0].innerHTML;
-
-        for (var key in years[selectedMake][selectedModel]) {
-            year.append($('<option/>', {'value': years[selectedMake][selectedModel][key], 'text': years[selectedMake][selectedModel][key]}));
-        }
-    });
+function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+    infoWindow.setPosition(pos);
+    infoWindow.setContent(browserHasGeolocation ?
+        'Error: The Geolocation service failed.' :
+        'Error: Your browser doesn\'t support geolocation.');
+    infoWindow.open(map);
+}
 </script>
-
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA5UbbMmUDD0EtU_aK73P6cgpI-GklZlVk"></script>
 {% endblock %}
